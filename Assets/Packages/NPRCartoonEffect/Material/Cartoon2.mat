@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Cartoon2
+  m_Shader: {fileID: 4800000, guid: 60266dd225cdd804696fba6a0852c651, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+    - first:
+        name: _DarkStyleTex
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MainTex
+      second:
+        m_Texture: {fileID: 2800000, guid: d2d29c69b4d8ccb4ebc3598c80011044, type: 3}
+        m_Scale: {x: 16, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _RampTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 24573809a5fd91d458c92a40e3ba763b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _StylizedTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 431999f667fedfd47a111c6b2a150774, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - first:
+        name: _NoRampGradient
+      second: 3
+    - first:
+        name: _OutlineWidth
+      second: 0
+    - first:
+        name: _ProceduralGradient
+      second: 3
+    - first:
+        name: _SpecularRotationX
+      second: 0
+    - first:
+        name: _SpecularRotationY
+      second: 0
+    - first:
+        name: _SpecularRotationZ
+      second: 0
+    - first:
+        name: _SpecularScale
+      second: 0.025178572
+    - first:
+        name: _SpecularScaleX
+      second: -0.035714287
+    - first:
+        name: _SpecularScaleY
+      second: 0
+    - first:
+        name: _SpecularSplitX
+      second: 0.26785713
+    - first:
+        name: _SpecularSplitY
+      second: 0
+    - first:
+        name: _SpecularTranslationX
+      second: 0
+    - first:
+        name: _SpecularTranslationY
+      second: 0
+    - first:
+        name: _StylizedTexEnd
+      second: 0.6
+    - first:
+        name: _StylizedTexStart
+      second: 0.5
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _DiffuseColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _OutlineColor
+      second: {r: 1, g: 1, b: 0, a: 0}
+    - first:
+        name: _SpecularColor
+      second: {r: 1, g: 1, b: 1, a: 1}

@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour, IHolder
 	[SerializeField, ReadOnly] private const string ANIM_SPEED_MULTIPLIER = "SpeedMultiplier";
 	[SerializeField, ReadOnly] private const string ANIM_GROUNDED = "Grounded";
 	[SerializeField, ReadOnly] private const string ANIM_JUMP = "Jump";
+	[SerializeField, ReadOnly] private const string ANIM_ATTACK = "Attack";
 
 	[Header(" --- Holding --- ")]
 	[SerializeField] private float dropDelaySeconds = .5f;
@@ -54,6 +55,8 @@ public class PlayerController : MonoBehaviour, IHolder
 	[Header(" --- Other Stuff --- ")]
 	[SerializeField] private GameObject character;
 	[SerializeField] private Rigidbody rotationRigidBody;
+	[SerializeField] private GameObject trowel;
+	[SerializeField] private AnimationClip trowelAnimation;
 	[SerializeField] private Collider hitBox;
 	[SerializeField] private LayerMask jumpMask;
 	[SerializeField, ReadOnly] private bool grounded;
@@ -91,6 +94,8 @@ public class PlayerController : MonoBehaviour, IHolder
 		UpdateIK();
 
 		UpdateBrickRelease();
+
+		UpdateSlash();
 	}
 
 	private void FixedUpdate()
@@ -234,13 +239,13 @@ public class PlayerController : MonoBehaviour, IHolder
 	            
 	            facingAngleChange = lookAngle.AngleChange(facingAngle);
 	            
-	            Debug.Log(
-		            "lookAngle: " + lookAngle + ", " +
-		            "previousLookAngle: " + previousLookAngle + ", " + 
-		            "spinAngleChange: " + spinAngleChange + ", " + 
-		            "spinAngleChangeAverage: " + spinAngleChangeAverage + ", " + 
-		            "facingAngleChange: " + facingAngleChange + ", " 
-		            );
+//	            Debug.Log(
+//		            "lookAngle: " + lookAngle + ", " +
+//		            "previousLookAngle: " + previousLookAngle + ", " + 
+//		            "spinAngleChange: " + spinAngleChange + ", " + 
+//		            "spinAngleChangeAverage: " + spinAngleChangeAverage + ", " + 
+//		            "facingAngleChange: " + facingAngleChange + ", " 
+//		            );
             }
 			
             float currentSpinSpeed = rotationRigidBody.angularVelocity.y;
@@ -301,6 +306,19 @@ public class PlayerController : MonoBehaviour, IHolder
 		}
 	}
 
+	private void UpdateSlash()
+	{
+		if (action4 != 0 && previousAction4 == 0)
+		{
+			Animation animation = trowel.GetComponent<Animation>();
+			animation.AddClip(trowelAnimation, trowelAnimation.name);
+			animation.Play(trowelAnimation.name);
+//			trowel.PlayLegacy(trowelAnimation, true);
+//			trowel.PlayLegacy("TrowelStrike - Legacy");
+			characterAnimator.SetTrigger(ANIM_ATTACK);
+		}
+	} 
+
 	private Vector3 ConvertToCameraSpace(Vector2 axis)
 	{
 		if (cameraControl == null)
@@ -358,6 +376,7 @@ public class PlayerController : MonoBehaviour, IHolder
 	public void BreakJoint()
 	{
 		held.BreakJoint();
+		trowel.SetActive(true);
 	}
 
 	public void JointBroken(float breakForce)
@@ -379,7 +398,16 @@ public class PlayerController : MonoBehaviour, IHolder
 			if (ellapsed.Seconds > dropDelaySeconds || value == null)
 			{
 				held = value;
-				held.ConnectToJoint(this);
+
+				if (held != null)
+				{
+					held.ConnectToJoint(this);
+					trowel.SetActive(false);
+				}
+				else
+				{
+					trowel.SetActive(true);
+				}
 			}
 		}
 		get

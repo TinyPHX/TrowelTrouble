@@ -3,21 +3,25 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
+    [Header(" --- Attributes --- ")]
     private bool initialized = false;
-    public List<GameObject> enemies = new List<GameObject>();
     private int wavesCompleted = 0;
     private int currentWave = 0;
     private int enemyIncreasePerWave = 2;//TODO: Create a generated number based on current wave and completed to increase difficulty;
     private int currentWaveEnemies = 0;
-    private int waveLengthSeconds = 30;
+    private int waveDurationMultiplier = 5;
+    private int newWaveStartingDelayInSeconds = 5;
+    private int waveDurationInSeconds = 0;
+
+    [Header(" --- Prefabs --- ")]
     [SerializeField]
     private GameObject enemyBrickPrefab;
-
+    public List<GameObject> enemies = new List<GameObject>();
+    
     private void Awake()
     {
-        SpawnEnemies();
         this.initialized = true;
-
+        StartWave();
     }
 
     private void SpawnEnemies()
@@ -35,14 +39,41 @@ public class EnemyController : MonoBehaviour
             EnemyBrick enemyComponent = e.GetComponent<EnemyBrick>();
             if (enemyComponent.isDead == false)
             {
-                newEnemies.Add(e);
+                enemyComponent.ResetToDefaults();
+                newEnemies.Add(enemyComponent.gameObject);
+            }
+            else
+            {
+                Destroy(e);
             }
         }
 
         this.enemies = newEnemies;
-        this.currentWave++;
-        this.wavesCompleted = currentWave - 1;
+        Invoke("EndWave", waveDurationInSeconds);
     }
 
+    private void StartWave()
+    {
+        this.currentWave++;
+        this.wavesCompleted = currentWave - 1;
+        this.waveDurationInSeconds = GetWaveDurationInSeconds();
+        if (this.currentWave > 0)
+        {
+            Invoke("SpawnEnemies", newWaveStartingDelayInSeconds);
+        }
+        else
+        {
+          SpawnEnemies();
+        }
+    }
 
+    private void EndWave()
+    {
+        StartWave();
+    }
+
+    private int GetWaveDurationInSeconds()
+    {
+        return this.enemies.Count * this.waveDurationMultiplier;
+    }
 }

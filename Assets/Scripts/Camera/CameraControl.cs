@@ -136,7 +136,6 @@ public class CameraControl : MonoBehaviour
         float newDistance = Vector3.Distance(playerController.transform.position, brickTower.transform.position);
         cameraDistance = Mathf.Clamp(newDistance, minDistance, maxDistance);
         float distanceRatio = (cameraDistance - minDistance) / (maxDistance - minDistance);
-        Debug.Log("distanceRatio: " + distanceRatio);
         cameraDistance = cameraDistance * distanceCurve.Evaluate(distanceRatio);
 
         rotationDampTime = 1 / newDistance * 2;

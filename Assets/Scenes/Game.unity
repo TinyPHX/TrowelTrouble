@@ -372,11 +372,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60e00abfb88033c4da6da65ea073a04a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wavesCompleted: 0
+  currentWave: 0
+  enemyIncreasePerWave: 2
+  currentWaveEnemies: 0
+  waveDurationMultiplier: 5
+  newWaveStartingDelayInSeconds: 2
+  waveDurationInSeconds: 0
+  waveDurationMultiplierGrowth: 0.6
   enemyBrickPrefab: {fileID: 1674892709158686, guid: 9aa424db3b054f94b871c7cb937b5288,
     type: 2}
-  enemies:
-  - {fileID: 1674892709158686, guid: 9aa424db3b054f94b871c7cb937b5288, type: 2}
-  - {fileID: 1674892709158686, guid: 9aa424db3b054f94b871c7cb937b5288, type: 2}
+  enemies: []
 --- !u!4 &1520996337
 Transform:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using TP.ExtensionMethods;
 
 public class EnemyController : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class EnemyController : MonoBehaviour
 
     [Header(" --- Prefabs --- ")]
     [SerializeField]
-    private GameObject enemyBrickPrefab;
+    private List<GameObject> enemyBrickPrefab;
     public List<GameObject> enemies = new List<GameObject>();
 
     private void Awake()
@@ -49,7 +50,8 @@ public class EnemyController : MonoBehaviour
 
         for (int i = 0; i < enemyIncreasePerWave; i++)
         {
-            GameObject enemy = Instantiate(enemyBrickPrefab);
+            GameObject brick = enemyBrickPrefab.PickRandom();
+            GameObject enemy = Instantiate(brick);
             enemies.Add(enemy);
         }
         this.currentWaveEnemies += enemyIncreasePerWave;

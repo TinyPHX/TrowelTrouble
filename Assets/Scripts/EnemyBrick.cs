@@ -1,23 +1,40 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public class EnemyBrick : MonoBehaviour
 {
-	private NavMeshAgent navMeshAgent;
-	private BrickTower brickTower;
-	
-	// Use this for initialization
-	void Start ()
-	{
-		navMeshAgent = GetComponent<NavMeshAgent>();
-		brickTower = FindObjectOfType<BrickTower>();
-	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-		navMeshAgent.SetDestination(brickTower.transform.position);
-	}
+    public NavMeshAgent navMeshAgent;
+    public new Rigidbody rigidbody;
+    private BrickTower brickTower;
+    private GameObject cube;
+    public int maxHealth = 5;
+    public int health = 5;
+    public bool isDead = false;
+
+    // Use this for initialization
+    public void Start()
+    {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (navMeshAgent != null)
+        {
+            navMeshAgent.SetDestination(brickTower.transform.position);
+        }
+    }
+
+    public void Hit()
+    {
+        if (this.health > 0)
+        {
+            this.health -= 1;
+        }
+        if (this.health == 0 && this.isDead == false)
+        {
+            this.isDead = true;
+        }
+    }
+
 }

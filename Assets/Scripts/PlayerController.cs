@@ -344,13 +344,7 @@ public class PlayerController : MonoBehaviour, IHolder
 			{
 				ActivelyHeld = holdable;
 
-//				EnemyBrick enemyBrick = otherRigidbody.GetComponent<EnemyBrick>();
-//	
-//				if (enemyBrick)
-//				{
-//					//check if dead
-//					//pickup.
-//				}
+
 			}
 		}
 	}

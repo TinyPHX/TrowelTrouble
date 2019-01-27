@@ -50,6 +50,9 @@ public class EnemyBrick : MonoBehaviour
     // Use this for initialization
     public void Start()
     {
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        brickTower = FindObjectOfType<BrickTower>();
+        rigidbody = GetComponent<Rigidbody>();
     }
 
     public void Unstack()
@@ -61,9 +64,42 @@ public class EnemyBrick : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (navMeshAgent != null)
+        if (navMeshAgent != null&& navMeshAgent.enabled)
         {
-            navMeshAgent.SetDestination(brickTower.transform.position);
+            if (isDead && inTower == false)
+            {
+                MoveAwayFrom(brickTower.transform.position, 19);
+            }
+            else if (isDead == false && inTower == false)
+            {
+                MoveTo(brickTower.transform.position);
+            }
+            else
+            {
+                StopMoving();
+            }
         }
+    }
+
+    private void MoveAwayFrom(Vector3 position, float distance)
+    {
+        Vector3 direction = (transform.position - position).normalized;
+        Vector3 newPosition = transform.position + (direction * distance);
+        MoveTo(newPosition);
+    }
+
+    private void MoveTo(Vector3 position)
+    {
+        navMeshAgent.SetDestination(position);
+    }
+
+    private void StopMoving()
+    {
+        navMeshAgent.SetDestination(transform.position);
+    }
+
+    public void Destroy()
+    {
+        Destroy(gameObject);
     }
 }

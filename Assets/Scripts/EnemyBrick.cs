@@ -13,7 +13,7 @@ public class EnemyBrick : MonoBehaviour
     public bool isDead = false;
     public bool inTower = false;
     public int respawnCount = 0;
-    private float safeZoneDistance = 19f;
+    private float safeZoneDistance = 20f;
     public float maxSpeed = 1f;
     public float invincibleTime = 1;
 
@@ -129,12 +129,18 @@ public class EnemyBrick : MonoBehaviour
     {
         if (navMeshAgent != null && navMeshAgent.enabled && !IsHeld && grounded)
         {
-            navMeshAgent.SetDestination(brickTower.transform.position);
-
-            if (!isDead)
-            {
-
-            }
+                if (isDead && inTower == false)
+                {
+                    MoveAwayFrom(brickTower.transform.position, 19);
+                }
+                else if (isDead == false && inTower == false)
+                {
+                    MoveTo(brickTower.transform.position);
+                }
+                else
+                {
+                    StopMoving();
+                }
         }
 
         UpdateAnimation();

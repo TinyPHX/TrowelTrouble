@@ -14,18 +14,18 @@ public class CharacterController : MonoBehaviour {
 		
 	}
 
-	private void OnTriggerEnter(Collider other)
-	{
-		Rigidbody otherRigidbody = other.attachedRigidbody;
-
-		if (otherRigidbody != null)
-		{
-			EnemyBrick enemyBrick = otherRigidbody.GetComponent<EnemyBrick>();
-
-			if (enemyBrick != null)
-			{
-				enemyBrick.Hit();
-			}
-		}
-	}
+//	private void OnTriggerEnter(Collider other)
+//	{
+//		Rigidbody otherRigidbody = other.attachedRigidbody;
+//
+//		if (otherRigidbody != null)
+//		{
+//			EnemyBrick enemyBrick = otherRigidbody.GetComponent<EnemyBrick>();
+//
+//			if (enemyBrick != null)
+//			{
+//				enemyBrick.Hit();
+//			}
+//		}
+//	}
 }

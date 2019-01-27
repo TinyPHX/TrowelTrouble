@@ -161,7 +161,7 @@ public class Holdable : MonoBehaviour
     public void BreakJoint()
     {
         holdableJoint.Break();
-        beingHeld = false;
+        BeingHeld = false;
         OnHoldableJointBreak(0);
     }
 
@@ -202,6 +202,12 @@ public class Holdable : MonoBehaviour
         {
             return holdableJoint;
         }
+    }
+
+    public bool BeingHeld
+    {
+        get { return beingHeld; }
+        set { beingHeld = value; }
     }
 
     public virtual void OnHoldableJointBreak(float breakForce)

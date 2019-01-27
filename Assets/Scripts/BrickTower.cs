@@ -50,6 +50,11 @@ public class BrickTower : MonoBehaviour
 
     private void AddBrick(EnemyBrick brick)
     {
+        if (brick.IsHeld)
+        {
+            brick.holdable.BreakJoint();
+        }
+        
         int shortestQuadrantIndex = ShortestQuadrantIndex();
 
         Vector3 brickSize = Vector3.Scale(brick.GetComponentInChildren<BoxCollider>().size, brick.GetComponentInChildren<BoxCollider>().transform.localScale);

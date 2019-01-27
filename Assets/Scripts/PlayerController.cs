@@ -310,14 +310,22 @@ public class PlayerController : MonoBehaviour, IHolder
 	{
 		if (action4 != 0 && previousAction4 == 0)
 		{
-			Animation animation = trowel.GetComponent<Animation>();
-			animation.AddClip(trowelAnimation, trowelAnimation.name);
-			animation.Play(trowelAnimation.name);
-//			trowel.PlayLegacy(trowelAnimation, true);
-//			trowel.PlayLegacy("TrowelStrike - Legacy");
 			characterAnimator.SetTrigger(ANIM_ATTACK);
 		}
-	} 
+	}
+
+	public void TrowelSlashStart()
+	{
+		trowel.SetActive(true);
+		Animation animation = trowel.GetComponent<Animation>();
+		animation.AddClip(trowelAnimation, trowelAnimation.name);
+		animation.Play(trowelAnimation.name);
+	}
+
+	public void TrowelSlashEnd()
+	{
+		trowel.SetActive(false);
+	}
 
 	private Vector3 ConvertToCameraSpace(Vector2 axis)
 	{
@@ -360,9 +368,19 @@ public class PlayerController : MonoBehaviour, IHolder
 
 			if (holdable != null && ActivelyHeld == null)
 			{
-				ActivelyHeld = holdable;
-
-
+				EnemyBrick enemyBrick = otherRigidBody.GetComponent<EnemyBrick>();
+				if (enemyBrick)
+				{
+					if (enemyBrick.isDead && !enemyBrick.inTower && !enemyBrick.IsHeld)
+					{
+						var ellapsed = new TimeSpan(DateTime.Now.Ticks - lastDropTime);
+						if (ellapsed.Seconds > dropDelaySeconds)
+						{
+							enemyBrick.PickedUp();
+							ActivelyHeld = holdable;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -377,7 +395,7 @@ public class PlayerController : MonoBehaviour, IHolder
 	{
 		if (held != null)
 		{
-			held.beingHeld = false;
+			held.BeingHeld = false;
 			held = null;
 		}
 

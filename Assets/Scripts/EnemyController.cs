@@ -33,7 +33,7 @@ public class EnemyController : MonoBehaviour
         foreach (var e in enemies)
         {
             EnemyBrick enemyComponent = e.GetComponent<EnemyBrick>();
-            if (enemyComponent.IsDead == false)
+            if (enemyComponent.isDead == false)
             {
                 newEnemies.Add(e);
             }

@@ -10,6 +10,7 @@ public class EnemyBrick : MonoBehaviour
     public bool isDead = false;
     public bool inTower = false;
     public int respawnCount = 0;
+    private float safeZoneDistance = 19f;
 
     [Header(" --- Other --- ")]
     public NavMeshAgent navMeshAgent;
@@ -64,7 +65,7 @@ public class EnemyBrick : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (navMeshAgent != null&& navMeshAgent.enabled)
+        if (navMeshAgent != null && navMeshAgent.enabled)
         {
             if (isDead && inTower == false)
             {
@@ -98,8 +99,22 @@ public class EnemyBrick : MonoBehaviour
         navMeshAgent.SetDestination(transform.position);
     }
 
-    public void Destroy()
+    public bool IsInSafeZone()
     {
-        Destroy(gameObject);
+        Vector3 brickTowerPosition = brickTower.transform.position;
+        Vector3 brickPosition = transform.position;
+        Vector3 distance = brickTowerPosition - brickPosition;
+        return Vector3.Distance(brickPosition, brickTowerPosition) >= safeZoneDistance ;
+        
+    }
+
+    public bool Destroy()
+    {
+        if (IsInSafeZone() && isDead && inTower == false)
+        {
+          Destroy(gameObject);
+            return true;
+        }
+        return false;
     }
 }

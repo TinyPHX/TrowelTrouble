@@ -124,6 +124,7 @@ public class EnemyBrick : MonoBehaviour
         holdable = GetComponent<Holdable>();
 
         navMeshAgent.speed = maxSpeed;
+        navMeshAgent.nextPosition = new Vector3(Random.Range(-3.0f, 20.0f), 0, Random.Range(-3.0f, 20.0f));
     }
 
     public void Unstack()

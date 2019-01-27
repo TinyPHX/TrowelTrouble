@@ -380,8 +380,10 @@ MonoBehaviour:
   newWaveStartingDelayInSeconds: 2
   waveDurationInSeconds: 0
   waveDurationMultiplierGrowth: 0.6
-  enemyBrickPrefab: {fileID: 1674892709158686, guid: 9aa424db3b054f94b871c7cb937b5288,
-    type: 2}
+  enemyBrickPrefab:
+  - {fileID: 1948095237131858, guid: 7abe8822e3bee644089d49506c86c717, type: 2}
+  - {fileID: 1528944407577268, guid: 4a57c0f12b76e39429b65ad2091a271a, type: 2}
+  - {fileID: 1390147759549830, guid: 4d14035918e6b1b429efa2816af19a31, type: 2}
   enemies: []
 --- !u!4 &1520996337
 Transform:

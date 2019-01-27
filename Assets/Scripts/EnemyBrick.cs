@@ -18,18 +18,21 @@ public class EnemyBrick : MonoBehaviour
     public float invincibleTime = 1;
 
     [Header(" --- Models --- ")]
-    [SerializeField] private GameObject aliveModel;
+    [SerializeField]
+    private GameObject aliveModel;
     [SerializeField] private GameObject deadModel;
-    
+
     [Header(" --- Animation --- ")]
-    [SerializeField] private Animator characterAnimator;
+    [SerializeField]
+    private Animator characterAnimator;
     [SerializeField, ReadOnly] private const string ANIM_SPEED_MULTIPLIER = "SpeedMultiplier";
     [SerializeField, ReadOnly] private const string ANIM_GROUNDED = "Grounded";
     [SerializeField, ReadOnly] private const string ANIM_JUMP = "Jump";
     [SerializeField, ReadOnly] private const string ANIM_ATTACK = "Attack";
 
     [Header(" --- Other --- ")]
-    [SerializeField, ReadOnly] public NavMeshAgent navMeshAgent;
+    [SerializeField, ReadOnly]
+    public NavMeshAgent navMeshAgent;
     [SerializeField, ReadOnly] public new Rigidbody rigidbody;
     private BrickTower brickTower;
     private GameObject cube;
@@ -43,7 +46,13 @@ public class EnemyBrick : MonoBehaviour
 
     public bool IsHeld
     {
-        get { return holdable.BeingHeld; }
+        get
+        {
+            if (holdable == null)
+            { return false; }
+
+            return holdable.BeingHeld;
+        }
     }
 
     public void Hit()
@@ -56,7 +65,7 @@ public class EnemyBrick : MonoBehaviour
                 lastHitTime = Time.time;
             }
         }
-        
+
         if (this.health == 0 && this.isDead == false)
         {
             this.isDead = true;
@@ -103,9 +112,9 @@ public class EnemyBrick : MonoBehaviour
         navMeshAgent = GetComponent<NavMeshAgent>();
         brickTower = FindObjectOfType<BrickTower>();
         rigidbody = GetComponent<Rigidbody>();
-        
+
         holdable = GetComponent<Holdable>();
-        
+
         navMeshAgent.speed = maxSpeed;
     }
 
@@ -124,14 +133,14 @@ public class EnemyBrick : MonoBehaviour
 
             if (!isDead)
             {
-                
+
             }
         }
 
         UpdateAnimation();
-        
+
         CheckIfGrounded();
-        
+
         EnableDisableNavAgent();
     }
 
@@ -139,15 +148,15 @@ public class EnemyBrick : MonoBehaviour
     {
         if (grounded && !IsHeld && !inTower && !navMeshAgent.enabled)
         {
-//            navMeshAgent.pos
+            //            navMeshAgent.pos
             navMeshAgent.enabled = true;
         }
     }
-	
+
     private void CheckIfGrounded()
     {
         previousGrounded = grounded;
-        
+
         bool groundCheck = false;
         float distanceToGround = .02f;
 
@@ -169,12 +178,12 @@ public class EnemyBrick : MonoBehaviour
             characterAnimator.SetFloat(ANIM_SPEED_MULTIPLIER, speedRatio);
         }
     }
-    
+
     private void MoveRandomDirection(float distance)
     {
         Vector3 randomPositionOffset = new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f)) * distance;
         navMeshAgent.SetDestination(transform.position + randomPositionOffset);
-        
+
         if (navMeshAgent != null && navMeshAgent.enabled)
         {
             if (isDead && inTower == false)
@@ -220,15 +229,15 @@ public class EnemyBrick : MonoBehaviour
         Vector3 brickTowerPosition = brickTower.transform.position;
         Vector3 brickPosition = transform.position;
         Vector3 distance = brickTowerPosition - brickPosition;
-        return Vector3.Distance(brickPosition, brickTowerPosition) >= safeZoneDistance ;
-        
+        return Vector3.Distance(brickPosition, brickTowerPosition) >= safeZoneDistance;
+
     }
 
     public bool Destroy()
     {
         if (IsInSafeZone() && isDead && inTower == false)
         {
-          Destroy(gameObject);
+            Destroy(gameObject);
             return true;
         }
         return false;

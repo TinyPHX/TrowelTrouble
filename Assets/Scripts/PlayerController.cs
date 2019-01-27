@@ -301,7 +301,6 @@ public class PlayerController : MonoBehaviour, IHolder
 			Vector3 newVelocity = heldRigidBody.velocity * releaseForce;
 			newVelocity.y = newVelocity.magnitude * releaseAngle;
 			heldRigidBody.velocity = newVelocity;
-			Debug.Log("Throwing brick! newVelocity: " + newVelocity);
 			BreakJoint();
 		}
 	}

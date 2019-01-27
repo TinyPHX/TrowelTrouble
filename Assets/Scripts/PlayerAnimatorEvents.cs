@@ -18,13 +18,11 @@ public class PlayerAnimatorEvents : MonoBehaviour
 	
 	public void Slash() 
 	{
-		Debug.Log("slash");
 		player.TrowelSlashStart();
 	}
 	
 	public void SlashEnd() 
 	{
-		Debug.Log("slash");
 		player.TrowelSlashEnd();
 	}
 }

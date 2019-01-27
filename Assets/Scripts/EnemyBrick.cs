@@ -79,14 +79,14 @@ public class EnemyBrick : MonoBehaviour
         deadModel.SetActive(true);
         rigidbody.mass = 5;
         navMeshAgent.speed *= .1f;
+        transform.position += Vector3.up * 0.427f;
+        rigidbody.velocity = Vector3.up * 1;
     }
 
     public void PickedUp()
     {
         holdable.BeingHeld = true;
         navMeshAgent.enabled = false;
-
-        Debug.Log("PickedUp");
     }
 
     public void ResetToDefaults()

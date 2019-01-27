@@ -16,6 +16,9 @@ public class EnemyBrick : MonoBehaviour
     private float safeZoneDistance = 20f;
     public float maxSpeed = 1f;
     public float invincibleTime = 1;
+    public int damagePerSecond = 1;
+    private float nextActionTime = 0.0f;
+    public float actionPeriod = 1f;
 
     [Header(" --- Models --- ")]
     [SerializeField]
@@ -43,6 +46,11 @@ public class EnemyBrick : MonoBehaviour
     [SerializeField, ReadOnly] private bool grounded;
     [SerializeField, ReadOnly] private bool previousGrounded;
     public Holdable holdable;
+
+
+
+
+
 
     public bool IsHeld
     {
@@ -123,17 +131,28 @@ public class EnemyBrick : MonoBehaviour
         this.inTower = false;
         this.navMeshAgent.enabled = true;
     }
-
+    
     // Update is called once per frame
     void Update()
     {
-        if (navMeshAgent != null && navMeshAgent.enabled && !IsHeld && grounded)
+        if (navMeshAgent != null && navMeshAgent.enabled && !IsHeld)
         {
-                if (isDead && inTower == false)
+            if (TowerReached() && !isDead)
+            {
+                StopMoving();
+                if (Time.time > nextActionTime)
+                {
+                    nextActionTime += actionPeriod;
+                    brickTower.DamageTower(damagePerSecond);
+                }
+            }
+            else 
+            {
+                if (isDead && !inTower)
                 {
                     MoveAwayFrom(brickTower.transform.position, 19);
                 }
-                else if (isDead == false && inTower == false)
+                else if (!isDead && !inTower)
                 {
                     MoveTo(brickTower.transform.position);
                 }
@@ -141,7 +160,12 @@ public class EnemyBrick : MonoBehaviour
                 {
                     StopMoving();
                 }
+            }
+            
         }
+
+
+
 
         UpdateAnimation();
 
@@ -232,11 +256,20 @@ public class EnemyBrick : MonoBehaviour
 
     public bool IsInSafeZone()
     {
+        return GetDistanceFromTower() >= safeZoneDistance;
+    }
+
+    private float GetDistanceFromTower()
+    {
         Vector3 brickTowerPosition = brickTower.transform.position;
         Vector3 brickPosition = transform.position;
         Vector3 distance = brickTowerPosition - brickPosition;
-        return Vector3.Distance(brickPosition, brickTowerPosition) >= safeZoneDistance;
+        return Vector3.Distance(brickPosition, brickTowerPosition);
+    }
 
+    private bool TowerReached()
+    {
+        return GetDistanceFromTower() <= 1;
     }
 
     public bool Destroy()

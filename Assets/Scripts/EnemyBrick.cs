@@ -172,17 +172,34 @@ public class EnemyBrick : MonoBehaviour
     {
         Vector3 randomPositionOffset = new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f)) * distance;
         navMeshAgent.SetDestination(transform.position + randomPositionOffset);
-    }
-
-    private void MoveTo(Vector3 position)
-    {
-        navMeshAgent.SetDestination(position);
+        
+        if (navMeshAgent != null&& navMeshAgent.enabled)
+        {
+            if (isDead && inTower == false)
+            {
+                MoveAwayFrom(brickTower.transform.position, 19);
+            }
+            else if (isDead == false && inTower == false)
+            {
+                MoveTo(brickTower.transform.position);
+            }
+            else
+            {
+                StopMoving();
+            }
+        }
     }
 
     private void MoveAwayFrom(Vector3 position, float distance)
     {
         Vector3 direction = (transform.position - position).normalized;
-        navMeshAgent.SetDestination(transform.position + (direction * distance));
+        Vector3 newPosition = transform.position + (direction * distance);
+        MoveTo(newPosition);
+    }
+
+    private void MoveTo(Vector3 position)
+    {
+        navMeshAgent.SetDestination(position);
     }
 
     private void StopMoving()
@@ -194,5 +211,10 @@ public class EnemyBrick : MonoBehaviour
     private Collider HitBox
     {
         get { return isDead ? deadHitBox : aliveHitBox; }
+    }
+
+    public void Destroy()
+    {
+        Destroy(gameObject);
     }
 }

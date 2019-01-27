@@ -5,18 +5,19 @@ using UnityEngine;
 public class BrickTower : MonoBehaviour
 {
 	private List<EnemyBrick>[] quadrants = new List<EnemyBrick>[4];
-    private float damageGiven = 0;
+    private List<EnemyBrick> popQueue = new List<EnemyBrick>();
 
-    /* Min and max distances for bricks after being popped */
     [SerializeField]
-    private float brickRespawnDistanceMin = 2;
-    [SerializeField]
-    private float brickRespawnDistanceMax = 5;
+    private float damageGiven = 0;
 
     [SerializeField]
     private Transform baseTransform;
     [SerializeField]
     private Vector3 brickPositionOffset = new Vector3(0, 0.5f, 0);
+    [SerializeField]
+    private float popSpeed = 1;
+    [SerializeField]
+    private float brickPopReenableTime = 5; // Seconds
 
     // Use this for initialization
     void Start() {
@@ -61,7 +62,7 @@ public class BrickTower : MonoBehaviour
         Vector3 highestBrickInQuadrantSize;
         Vector3 highestBrickInQuadrantPositon;
 
-        brick.inTower = true;
+        brick.Stack();
         brick.GetComponent<Rigidbody>().isKinematic = true;
         brick.GetComponentInChildren<BoxCollider>().enabled = false;
 
@@ -119,16 +120,31 @@ public class BrickTower : MonoBehaviour
     /* Removes highest brick */
     private void PopBrick()
     {
-        HighestBrick().inTower = false;
-        quadrants[HighestQuadrantIndex()].Remove(HighestBrick());
-        // TODO: Move brick away from tower in random direction, use raycasting to set brick close to ground
+        EnemyBrick brick = HighestBrick();
+        quadrants[HighestQuadrantIndex()].Remove(brick);
+        brick.GetComponent<Rigidbody>().isKinematic = false;
+        brick.GetComponentInChildren<BoxCollider>().enabled = true;
+
+        float randomSignX = Mathf.Sign(Random.Range(-1, 1));
+        float randomSignZ = Mathf.Sign(Random.Range(-1, 1));
+
+        brick.GetComponent<Rigidbody>().velocity = new Vector3(randomSignX, 1f, randomSignZ) * popSpeed;
+
+        popQueue.Add(brick);
+        Invoke("UnstackFirstBrickInQueue", brickPopReenableTime);
+    }
+
+    private void UnstackFirstBrickInQueue()
+    {
+        popQueue[0].Unstack();
+        popQueue.RemoveAt(0);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         EnemyBrick enemy = other.attachedRigidbody.GetComponent<EnemyBrick>();
 
-        if (enemy != null && enemy.health <= 0 && enemy.inTower == false) // Check if EnemyBrick script was found, the brick is dead, and the brick isn't in the tower
+        if (enemy != null && enemy.isDead == true && enemy.inTower == false)
         {
             AddBrick(enemy);
         }

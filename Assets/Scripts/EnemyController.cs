@@ -5,19 +5,20 @@ public class EnemyController : MonoBehaviour
 {
     [Header(" --- Attributes --- ")]
     private bool initialized = false;
-    private int wavesCompleted = 0;
-    private int currentWave = 0;
-    private int enemyIncreasePerWave = 2;//TODO: Create a generated number based on current wave and completed to increase difficulty;
-    private int currentWaveEnemies = 0;
-    private int waveDurationMultiplier = 5;
-    private int newWaveStartingDelayInSeconds = 5;
-    private int waveDurationInSeconds = 0;
+    public int wavesCompleted = 0;
+    public int currentWave = 0;
+    public int enemyIncreasePerWave = 2;//TODO: Create a generated number based on current wave and completed to increase difficulty;
+    public int currentWaveEnemies = 0;
+    public int waveDurationMultiplier = 5;//TODO: Add a ratio so the time doesn't exponentially per block
+    public int newWaveStartingDelayInSeconds = 2;
+    public int waveDurationInSeconds = 0;
+    public float waveDurationMultiplierGrowth = .6f;
 
     [Header(" --- Prefabs --- ")]
     [SerializeField]
     private GameObject enemyBrickPrefab;
     public List<GameObject> enemies = new List<GameObject>();
-    
+
     private void Awake()
     {
         this.initialized = true;
@@ -26,29 +27,27 @@ public class EnemyController : MonoBehaviour
 
     private void SpawnEnemies()
     {
-        List<GameObject> newEnemies = new List<GameObject>();
-        int enemiesToSpawn = currentWaveEnemies + enemyIncreasePerWave;
-        for (int i = 0; i < enemiesToSpawn; i++)
+        for (int i = 0; i < this.enemies.Count; i++)
         {
-            GameObject enemy = Instantiate(enemyBrickPrefab);
-            newEnemies.Add(enemy);
-        }
-        this.currentWaveEnemies += enemiesToSpawn;
-        foreach (var e in enemies)
-        {
-            EnemyBrick enemyComponent = e.GetComponent<EnemyBrick>();
-            if (enemyComponent.isDead == false)
+            EnemyBrick enemyComponent = enemies[i].GetComponent<EnemyBrick>();
+            if (enemyComponent.isDead)
             {
-                enemyComponent.ResetToDefaults();
-                newEnemies.Add(enemyComponent.gameObject);
+                enemyComponent.Destroy();
+                enemies.Remove(enemies[i]);
             }
             else
             {
-                Destroy(e);
+                enemyComponent.ResetToDefaults();
             }
         }
 
-        this.enemies = newEnemies;
+        for (int i = 0; i < enemyIncreasePerWave; i++)
+        {
+            GameObject enemy = Instantiate(enemyBrickPrefab);
+            enemies.Add(enemy);
+        }
+        this.currentWaveEnemies += enemyIncreasePerWave;
+
         Invoke("EndWave", waveDurationInSeconds);
     }
 
@@ -63,7 +62,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-          SpawnEnemies();
+            SpawnEnemies();
         }
     }
 
@@ -74,6 +73,6 @@ public class EnemyController : MonoBehaviour
 
     private int GetWaveDurationInSeconds()
     {
-        return this.enemies.Count * this.waveDurationMultiplier;
+        return (int)((this.enemies.Count * this.waveDurationMultiplier) * waveDurationMultiplierGrowth);
     }
 }

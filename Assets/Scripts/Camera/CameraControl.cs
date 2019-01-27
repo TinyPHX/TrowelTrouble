@@ -99,6 +99,8 @@ public class CameraControl : MonoBehaviour
 
         playerController = FindObjectOfType<PlayerController>();
         brickTower = FindObjectOfType<BrickTower>();
+        targets = new List<CameraTarget>();
+        AddTarget(playerController.transform);
     }
 
     private void Update()

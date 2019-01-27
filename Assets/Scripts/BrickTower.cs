@@ -9,7 +9,6 @@ public class BrickTower : MonoBehaviour
 
     [SerializeField]
     private float damageGiven = 0;
-
     [SerializeField]
     private Transform baseTransform;
     [SerializeField]
@@ -18,13 +17,30 @@ public class BrickTower : MonoBehaviour
     private float popSpeed = 1;
     [SerializeField]
     private float brickPopReenableTime = 5; // Seconds
+    [SerializeField]
+    private GameObject roof = null;
+
+    private Vector3 roofSize = new Vector3(1, 1, 1); // Assume roof is 1 by 1 by 1 if it doesn't have collider
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         // Intialize quadrants with empty lists
         for (int i = 0; i < quadrants.Length; i++)
         {
             quadrants[i] = new List<EnemyBrick>();
+        }
+
+        if (roof != null)
+        {
+            BoxCollider collider = roof.GetComponent<BoxCollider>();
+
+            if (collider != null)
+            {
+                roofSize = collider.size;
+            }
+
+            TryMoveRoof();
         }
     }
 	
@@ -40,8 +56,21 @@ public class BrickTower : MonoBehaviour
             }
         }
 
-        //Time.timeScale = 0.8f;
+        Time.timeScale = 0.7f;
 	}
+
+    private void TryMoveRoof()
+    {
+        if (roof != null)
+        {
+            float tallestQuadrantHeight = GetQuadrantHeight(HighestQuadrantIndex());
+
+            Vector3 roofPos = baseTransform.position;
+            roofPos.y += (roofSize.y/2) + tallestQuadrantHeight - 0.25f;
+
+            roof.transform.position = roofPos;
+        }
+    }
 
     public void DamageTower(float damage)
     {
@@ -115,6 +144,8 @@ public class BrickTower : MonoBehaviour
         }
 
         quadrants[shortestQuadrantIndex].Add(brick);
+
+        TryMoveRoof();
     }
 
     /* Removes highest brick */
@@ -154,7 +185,10 @@ public class BrickTower : MonoBehaviour
     {
         if (quadrants[index].Count > 0)
         {
-            return quadrants[index][quadrants[index].Count-1].transform.position.y + (quadrants[index][quadrants[index].Count-1].GetComponentInChildren<BoxCollider>().size.y / 2);
+            Vector3 topBlockColliderSize = Vector3.Scale(quadrants[index][quadrants[index].Count - 1].GetComponentInChildren<BoxCollider>().size, 
+                quadrants[index][quadrants[index].Count - 1].GetComponentInChildren<BoxCollider>().transform.localScale);
+            float height = quadrants[index][quadrants[index].Count - 1].transform.position.y - brickPositionOffset.y + (topBlockColliderSize.y);
+            return height;
         }
 
         return 0;
@@ -201,7 +235,12 @@ public class BrickTower : MonoBehaviour
     {
         int highestQuadrantIndex = HighestQuadrantIndex();
 
-        return quadrants[highestQuadrantIndex][quadrants[HighestQuadrantIndex()].Count - 1];
+        if (quadrants[highestQuadrantIndex].Count > 0)
+        {
+            return quadrants[highestQuadrantIndex][quadrants[HighestQuadrantIndex()].Count - 1];
+        }
+
+        return null;
     }
 
     /* Returns the highest brick in a certain quadrant */

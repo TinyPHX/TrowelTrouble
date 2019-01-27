@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.VR.WSA.Input;
@@ -13,6 +14,7 @@ public class EnemyBrick : MonoBehaviour
     public bool isDead = false;
     public bool inTower = false;
     public int respawnCount = 0;
+    private float safeZoneDistance = 19f;
     public float maxSpeed = 1f;
     public float invincibleTime = 1;
 
@@ -42,7 +44,14 @@ public class EnemyBrick : MonoBehaviour
 
     public bool IsHeld
     {
-        get { return holdable.BeingHeld; }
+        get
+        {
+            if (holdable == null)
+            {
+                return false;
+            }
+            return holdable.BeingHeld;
+        }
     }
 
     public void Hit()
@@ -100,8 +109,9 @@ public class EnemyBrick : MonoBehaviour
     public void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
-        rigidbody = GetComponent<Rigidbody>();
         brickTower = FindObjectOfType<BrickTower>();
+        rigidbody = GetComponent<Rigidbody>();
+        
         holdable = GetComponent<Holdable>();
         
         navMeshAgent.speed = maxSpeed;
@@ -173,7 +183,7 @@ public class EnemyBrick : MonoBehaviour
         Vector3 randomPositionOffset = new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f)) * distance;
         navMeshAgent.SetDestination(transform.position + randomPositionOffset);
         
-        if (navMeshAgent != null&& navMeshAgent.enabled)
+        if (navMeshAgent != null && navMeshAgent.enabled)
         {
             if (isDead && inTower == false)
             {
@@ -213,8 +223,22 @@ public class EnemyBrick : MonoBehaviour
         get { return isDead ? deadHitBox : aliveHitBox; }
     }
 
-    public void Destroy()
+    public bool IsInSafeZone()
     {
-        Destroy(gameObject);
+        Vector3 brickTowerPosition = brickTower.transform.position;
+        Vector3 brickPosition = transform.position;
+        Vector3 distance = brickTowerPosition - brickPosition;
+        return Vector3.Distance(brickPosition, brickTowerPosition) >= safeZoneDistance ;
+        
+    }
+
+    public bool Destroy()
+    {
+        if (IsInSafeZone() && isDead && inTower == false)
+        {
+          Destroy(gameObject);
+            return true;
+        }
+        return false;
     }
 }

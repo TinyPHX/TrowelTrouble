@@ -10,7 +10,7 @@ public class EnemyController : MonoBehaviour
     public int enemyIncreasePerWave = 2;//TODO: Create a generated number based on current wave and completed to increase difficulty;
     public int currentWaveEnemies = 0;
     public int waveDurationMultiplier = 5;//TODO: Add a ratio so the time doesn't exponentially per block
-    public int newWaveStartingDelayInSeconds = 2;
+    public int newWaveStartingDelayInSeconds = 0;
     public int waveDurationInSeconds = 0;
     public float waveDurationMultiplierGrowth = .6f;
 
@@ -27,13 +27,19 @@ public class EnemyController : MonoBehaviour
 
     private void SpawnEnemies()
     {
+        List<int> itemIndexesToDelete = new List<int>();
         for (int i = 0; i < this.enemies.Count; i++)
         {
             EnemyBrick enemyComponent = enemies[i].GetComponent<EnemyBrick>();
             if (enemyComponent.isDead)
             {
-                enemyComponent.Destroy();
-                enemies.Remove(enemies[i]);
+                var destroyed = enemyComponent.Destroy();
+                if (destroyed)
+                {
+                    enemies.Remove(enemies[i]);
+                    i -= 1;
+                }
+                itemIndexesToDelete.Add(i);
             }
             else
             {
@@ -47,6 +53,12 @@ public class EnemyController : MonoBehaviour
             enemies.Add(enemy);
         }
         this.currentWaveEnemies += enemyIncreasePerWave;
+
+        //foreach (var i in itemIndexesToDelete)
+        //{
+        //        enemies[i].Destroy();
+        //    enemies.Remove(enemies[i]);
+        //}
 
         Invoke("EndWave", waveDurationInSeconds);
     }

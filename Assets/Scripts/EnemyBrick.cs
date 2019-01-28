@@ -16,7 +16,7 @@ public class EnemyBrick : MonoBehaviour
     private float safeZoneDistance = 20f;
     public float maxSpeed = 1f;
     public float invincibleTime = 1;
-    public int damagePerSecond = 1;
+    public float damagePerSecond = .01f;
     private float nextActionTime = 0.0f;
     public float actionPeriod = 1f;
 
@@ -141,10 +141,10 @@ public class EnemyBrick : MonoBehaviour
             if (TowerReached() && !isDead)
             {
                 StopMoving();
-                if (Time.time > nextActionTime)
+                if (Time.time > nextActionTime && !brickTower.IsTowerEmpty())
                 {
                     nextActionTime += actionPeriod;
-                    brickTower.DamageTower(damagePerSecond);
+                   brickTower.DamageTower(damagePerSecond);
                 }
             }
             else 

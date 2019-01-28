@@ -55,6 +55,7 @@ public class BrickTower : MonoBehaviour
                 PopBrick();
             }
         }
+        else { damageGiven = 0; }
 
         Time.timeScale = 0.7f;
 	}
@@ -254,7 +255,7 @@ public class BrickTower : MonoBehaviour
         return null;
     }
 
-    private bool IsTowerEmpty()
+    public bool IsTowerEmpty()
     {
         bool empty = true;
 

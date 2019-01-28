@@ -2395,6 +2395,8 @@ MonoBehaviour:
   respawnCount: 42
   maxSpeed: 1
   invincibleTime: 1
+  damagePerSecond: 1
+  actionPeriod: 1
   aliveModel: {fileID: 1353732152924840}
   deadModel: {fileID: 1197667001019386}
   characterAnimator: {fileID: 95039385498991574}

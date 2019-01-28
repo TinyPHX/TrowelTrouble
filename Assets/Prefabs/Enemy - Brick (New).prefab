@@ -2389,8 +2389,10 @@ MonoBehaviour:
   isDead: 0
   inTower: 0
   respawnCount: 42
-  maxSpeed: 1
+  maxSpeed: 3.5
   invincibleTime: 1
+  damagePerSecond: 1
+  actionPeriod: 1
   aliveModel: {fileID: 1836114680376700}
   deadModel: {fileID: 1115851309534388}
   characterAnimator: {fileID: 95610619077104604}

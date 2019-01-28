@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.VR.WSA.Input;
 using Random = UnityEngine.Random;
 
 public class EnemyBrick : MonoBehaviour
@@ -46,11 +45,6 @@ public class EnemyBrick : MonoBehaviour
     [SerializeField, ReadOnly] private bool grounded;
     [SerializeField, ReadOnly] private bool previousGrounded;
     public Holdable holdable;
-
-
-
-
-
 
     public bool IsHeld
     {
@@ -144,7 +138,8 @@ public class EnemyBrick : MonoBehaviour
                 if (Time.time > nextActionTime && !brickTower.IsTowerEmpty())
                 {
                     nextActionTime += actionPeriod;
-                   brickTower.DamageTower(damagePerSecond);
+                    brickTower.DamageTower(damagePerSecond);
+                    characterAnimator.SetTrigger(ANIM_ATTACK);
                 }
             }
             else 
@@ -162,11 +157,7 @@ public class EnemyBrick : MonoBehaviour
                     StopMoving();
                 }
             }
-            
         }
-
-
-
 
         UpdateAnimation();
 
@@ -177,16 +168,15 @@ public class EnemyBrick : MonoBehaviour
 
     private void EnableDisableNavAgent()
     {
-        if (grounded && !IsHeld && !inTower && !navMeshAgent.enabled)
+        if (Grounded && !IsHeld && !inTower && !navMeshAgent.enabled)
         {
-            //            navMeshAgent.pos
             navMeshAgent.enabled = true;
         }
     }
 
     private void CheckIfGrounded()
     {
-        previousGrounded = grounded;
+        previousGrounded = Grounded;
 
         bool groundCheck = false;
         float distanceToGround = .02f;
@@ -198,15 +188,18 @@ public class EnemyBrick : MonoBehaviour
             HitBox.bounds.size.y / 2 + distanceToGround,
             groundMask);
 
-        grounded = groundCheck;
+        Grounded = groundCheck;
     }
 
     private void UpdateAnimation()
     {
         if (!inTower)
         {
-            float speedRatio = maxSpeed / navMeshAgent.velocity.magnitude;
-            characterAnimator.SetFloat(ANIM_SPEED_MULTIPLIER, speedRatio);
+            float speedRatio = navMeshAgent.velocity.magnitude / 2.5f;
+            if (!isDead)
+            {
+                characterAnimator.SetFloat(ANIM_SPEED_MULTIPLIER, speedRatio);                
+            }
         }
     }
 
@@ -253,6 +246,12 @@ public class EnemyBrick : MonoBehaviour
     private Collider HitBox
     {
         get { return isDead ? deadHitBox : aliveHitBox; }
+    }
+
+    public bool Grounded
+    {
+        get { return grounded; }
+        private set { grounded = value; }
     }
 
     public bool IsInSafeZone()

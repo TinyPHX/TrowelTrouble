@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -16,5 +17,15 @@ public class Game : MonoBehaviour
 	void Update ()
 	{
 		Time.timeScale = timeScale;
+	}
+
+	public void ReloadGame()
+	{
+		SceneManager.LoadScene("Game");
+	}
+
+	public void Quit()
+	{
+		Application.Quit();
 	}
 }

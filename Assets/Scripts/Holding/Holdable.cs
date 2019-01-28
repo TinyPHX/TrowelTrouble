@@ -163,8 +163,6 @@ public class Holdable : MonoBehaviour
         holdableJoint.Break();
         BeingHeld = false;
         OnHoldableJointBreak(0);
-        
-        Debug.Log("BreakJoint");
     }
 
     public virtual void Use(IHolder holder)
@@ -220,8 +218,6 @@ public class Holdable : MonoBehaviour
         {
             holder.Rigidbody.IgnoreCollision(rigidBody, false);
         }
-        
-        Debug.Log("OnHoldableJointBreak");
     }
     
     void OnDrawGizmosSelected()

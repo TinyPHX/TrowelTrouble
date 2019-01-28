@@ -22,16 +22,16 @@ public class PlayerController : MonoBehaviour, IHolder
 	[SerializeField] private InputDevice.GenericInputs axisMoveX;
 	[SerializeField] private InputDevice.GenericInputs axisMoveY;
 	[SerializeField] private InputDevice.GenericInputs axisJump;
-	[SerializeField] private InputDevice.GenericInputs axisAction2;
-	[SerializeField] private InputDevice.GenericInputs axisAction3;
-	[SerializeField] private InputDevice.GenericInputs axisAction4;
+	[SerializeField] private InputDevice.GenericInputs axisManualSpin;
+	[SerializeField] private InputDevice.GenericInputs axisAutoSpin;
+	[SerializeField] private InputDevice.GenericInputs axisSlashAttack;
 	
 	[Header(" --- Input Values --- ")]
 	[SerializeField, ReadOnly] private Vector3 move;
 	[SerializeField, ReadOnly] private float jump;
-	[SerializeField, ReadOnly] private float action2;
-	[SerializeField, ReadOnly] private float action3;
-	[SerializeField, ReadOnly] private float action4;
+	[SerializeField, ReadOnly] private float manualSpin;
+	[SerializeField, ReadOnly] private float autoSpin;
+	[SerializeField, ReadOnly] private float slashAttack;
 	[SerializeField, ReadOnly] private Vector3 previousMove;
 	[SerializeField, ReadOnly] private float previousAction2;
 	[SerializeField, ReadOnly] private float previousAction3;
@@ -79,7 +79,15 @@ public class PlayerController : MonoBehaviour, IHolder
 	// Use this for initialization
 	void Start () 
 	{
-		
+		foreach (InputDevice inputDevice in inputDevices)
+		{
+			inputDevice.Refresh();
+
+			if (inputDevice.Valid && inputDevice.IsKeyboard())
+			{
+				this.inputDevice = inputDevice;
+			}
+		}
 	}
 	
 	// Update is called once per frame
@@ -140,21 +148,30 @@ public class PlayerController : MonoBehaviour, IHolder
 	private void GetUserInput()
 	{
 		previousMove = move;
-		previousAction2 = action2;
-		previousAction3 = action3;
-		previousAction4 = action4;
+		previousAction2 = manualSpin;
+		previousAction3 = autoSpin;
+		previousAction4 = slashAttack;
 		
 		move = ConvertToCameraSpace(new Vector3(inputDevice.GetAxis(axisMoveX), inputDevice.GetAxis(axisMoveY)));
 		move *= HoldingMultiplier;
 		jump = inputDevice.GetAxis(axisJump);
-		action2 = inputDevice.GetAxis(axisAction2);
-		action3 = inputDevice.GetAxis(axisAction3);
-		action4 = inputDevice.GetAxis(axisAction4);
+		autoSpin = inputDevice.GetAxis(axisAutoSpin);
+		manualSpin = inputDevice.GetAxis(axisManualSpin);
+		
+		if (inputDevice.IsKeyboard())
+		{
+			autoSpin = Input.GetMouseButton(1) ? 1 : 0;
+			slashAttack = Input.GetMouseButton(0) ? 1 : 0;
+		}
+		else
+		{
+			slashAttack = inputDevice.GetAxis(axisSlashAttack);
+		}
 	}
 
 	private void Move()
 	{
-		if (action2 == 0 || held == null)
+		if (manualSpin == 0 || held == null)
 		{
 			float brickTowerDistance = Vector3.Distance(brickTower.transform.position, transform.position);
 			float distanceMultiplier = 10 + brickTowerDistance;
@@ -210,7 +227,7 @@ public class PlayerController : MonoBehaviour, IHolder
 
 	private void Rotate()
 	{
-		if (held != null && action3 > 0)
+		if (held != null && autoSpin > 0)
 		{
 			float currentSpinSpeed = rotationRigidBody.angularVelocity.y;
 			float speedChange = -spinAcceleration * .2f;
@@ -219,7 +236,7 @@ public class PlayerController : MonoBehaviour, IHolder
 			rotationRigidBody.angularVelocity = newAngularVelocity;  
 			rotationRigidBody.maxAngularVelocity = spinSpeedMax;
 		}
-		else if (held != null && action2 > 0)
+		else if (held != null && manualSpin > 0)
 		{
 			float lookAngle = 0;
             float previousLookAngle = 0;
@@ -295,7 +312,7 @@ public class PlayerController : MonoBehaviour, IHolder
 
 	private void UpdateBrickRelease()
 	{
-		if (held != null && (previousAction2 > 0 && action2 == 0 || previousAction3 > 0 && action3 == 0))
+		if (held != null && (previousAction2 > 0 && manualSpin == 0 || previousAction3 > 0 && autoSpin == 0))
 		{
 			Rigidbody heldRigidBody = held.GetComponent<Rigidbody>();
 			Vector3 newVelocity = heldRigidBody.velocity * releaseForce;
@@ -307,7 +324,7 @@ public class PlayerController : MonoBehaviour, IHolder
 
 	private void UpdateSlash()
 	{
-		if (action4 != 0 && previousAction4 == 0)
+		if (held == null && slashAttack != 0 && previousAction4 == 0)
 		{
 			characterAnimator.SetTrigger(ANIM_ATTACK);
 		}

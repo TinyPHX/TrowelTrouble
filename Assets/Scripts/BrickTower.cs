@@ -79,7 +79,7 @@ public class BrickTower : MonoBehaviour
     private void AddBrick(EnemyBrick brick)
     {
         int brickCount = quadrants[0].Count + quadrants[1].Count + quadrants[2].Count + quadrants[3].Count;
-        if (brickCount >= 4)
+        if (brickCount >= 3)
         {
             roof.SetActive(true);
         }
@@ -183,7 +183,11 @@ public class BrickTower : MonoBehaviour
 
         if (enemy != null && enemy.isDead == true && enemy.inTower == false)
         {
-            AddBrick(enemy);
+            //enemy must be carried or thrown by player
+            if (enemy.IsHeld || !enemy.Grounded)
+            {
+                AddBrick(enemy);
+            }
         }
     }
 

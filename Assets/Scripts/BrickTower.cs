@@ -56,8 +56,6 @@ public class BrickTower : MonoBehaviour
             }
         }
         else { damageGiven = 0; }
-
-        Time.timeScale = 0.7f;
 	}
 
     private void TryMoveRoof()
@@ -80,6 +78,13 @@ public class BrickTower : MonoBehaviour
 
     private void AddBrick(EnemyBrick brick)
     {
+        int brickCount = quadrants[0].Count + quadrants[1].Count + quadrants[2].Count + quadrants[3].Count;
+        if (brickCount >= 4)
+        {
+            roof.SetActive(true);
+        }
+        
+        
         if (brick.IsHeld)
         {
             brick.holdable.BreakJoint();

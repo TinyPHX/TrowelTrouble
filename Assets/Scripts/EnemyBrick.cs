@@ -134,14 +134,14 @@ public class EnemyBrick : MonoBehaviour
     }
     
     // Update is called once per frame
-    void Update()
+    void Update()   
     {
         if (navMeshAgent != null && navMeshAgent.enabled && !IsHeld)
         {
             if (TowerReached() && !isDead)
             {
                 StopMoving();
-                if (Time.time > nextActionTime && !brickTower.IsTowerEmpty())
+                if (Time.time > nextActionTime && !brickTower.IsTowerEmpty() )
                 {
                     nextActionTime += actionPeriod;
                    brickTower.DamageTower(damagePerSecond);
@@ -225,7 +225,7 @@ public class EnemyBrick : MonoBehaviour
             {
                 MoveTo(brickTower.transform.position);
             }
-            else
+             else
             {
                 StopMoving();
             }

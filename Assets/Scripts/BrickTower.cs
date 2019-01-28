@@ -55,6 +55,7 @@ public class BrickTower : MonoBehaviour
                 PopBrick();
             }
         }
+        else { damageGiven = 0; } 
 	}
 
     private void TryMoveRoof()
@@ -259,7 +260,7 @@ public class BrickTower : MonoBehaviour
         return null;
     }
 
-    private bool IsTowerEmpty()
+    public bool IsTowerEmpty() 
     {
         bool empty = true;
 

@@ -81,8 +81,6 @@ public class PlayerController : MonoBehaviour, IHolder
 	{
 		foreach (InputDevice inputDevice in inputDevices)
 		{
-			inputDevice.Refresh();
-
 			if (inputDevice.Valid && inputDevice.IsKeyboard())
 			{
 				this.inputDevice = inputDevice;
@@ -94,20 +92,16 @@ public class PlayerController : MonoBehaviour, IHolder
 	void Update ()
 	{
 		AssignInputDevice();
-
 		GetUserInput();
-
 		UpdateAnimator();
-
 		UpdateIK();
-
 		UpdateBrickRelease();
-
-		UpdateSlash();
+		UpdateSlash(); 
 	}
 
 	private void FixedUpdate()
 	{
+		
 		Rotate();
 		Move();
 		Jump();
@@ -116,7 +110,6 @@ public class PlayerController : MonoBehaviour, IHolder
 	private void SetupInputDevices()
 	{
 		inputDevices.Add(new InputDevice(InputDevice.ID.K1));
-		//inputDevices.Add(new InputDevice(InputDevice.ID.M1));
 
 		int controllerCount = InputDevice.CONTROLLERS.Count;
 		string[] joyNames = Input.GetJoystickNames();
@@ -137,7 +130,12 @@ public class PlayerController : MonoBehaviour, IHolder
 
             if (inputDevice.Valid)
             {
-				if (inputDevice.GetAxis(InputDevice.GenericInputs.ACTION_1) > 0)
+				if (inputDevice.GetAxis(axisMoveX) > 0 ||
+				    inputDevice.GetAxis(axisMoveY) > 0 ||
+				    inputDevice.GetAxis(axisJump) > 0 ||
+				    inputDevice.GetAxis(axisAutoSpin) > 0 ||
+				    inputDevice.GetAxis(axisManualSpin) > 0 ||
+				    inputDevice.GetAxis(axisSlashAttack) > 0)
 				{
 					this.inputDevice = inputDevice;
 				}
@@ -157,15 +155,12 @@ public class PlayerController : MonoBehaviour, IHolder
 		jump = inputDevice.GetAxis(axisJump);
 		autoSpin = inputDevice.GetAxis(axisAutoSpin);
 		manualSpin = inputDevice.GetAxis(axisManualSpin);
+		slashAttack = inputDevice.GetAxis(axisSlashAttack); 
 		
 		if (inputDevice.IsKeyboard())
 		{
 			autoSpin = Input.GetMouseButton(1) ? 1 : 0;
 			slashAttack = Input.GetMouseButton(0) ? 1 : 0;
-		}
-		else
-		{
-			slashAttack = inputDevice.GetAxis(axisSlashAttack);
 		}
 	}
 
@@ -319,6 +314,7 @@ public class PlayerController : MonoBehaviour, IHolder
 			newVelocity.y = newVelocity.magnitude * releaseAngle;
 			heldRigidBody.velocity = newVelocity;
 			BreakJoint();
+			this.Rigidbody.IgnoreCollision(heldRigidBody, false);
 		}
 	}
 
@@ -394,6 +390,7 @@ public class PlayerController : MonoBehaviour, IHolder
 						{
 							enemyBrick.PickedUp();
 							ActivelyHeld = holdable;
+							TrowelSlashEnd();
 						}
 					}
 				}

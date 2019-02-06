@@ -18,6 +18,7 @@ public class EnemyBrick : MonoBehaviour
     public float damagePerSecond = .01f; 
     private float nextActionTime = 0.0f;
     public float actionPeriod = 1f;
+    public float attackDistance = 2f;
 
     [Header(" --- Models --- ")]
     [SerializeField]
@@ -45,6 +46,8 @@ public class EnemyBrick : MonoBehaviour
     [SerializeField, ReadOnly] private bool grounded;
     [SerializeField, ReadOnly] private bool previousGrounded;
     public Holdable holdable;
+
+    private Vector2 walkingDirection = Vector2.zero;
 
     public bool IsHeld
     {
@@ -130,6 +133,11 @@ public class EnemyBrick : MonoBehaviour
     // Update is called once per frame
     void Update()   
     {
+        if (!isDead)
+        {
+            rigidbody.velocity *= .1f;
+        }
+
         if (navMeshAgent != null && navMeshAgent.enabled && !IsHeld)
         {
             if (TowerReached() && !isDead)
@@ -150,7 +158,27 @@ public class EnemyBrick : MonoBehaviour
                 }
                 else if (!isDead && !inTower)
                 {
-                    MoveTo(brickTower.transform.position);
+                    if (brickTower.BrickCount > 0)
+                    {
+                        MoveTo(brickTower.transform.position);                        
+                    }
+                    else
+                    {
+
+                        if (Random.value > .999f || walkingDirection == Vector2.zero)
+                        {
+                            walkingDirection = new Vector2(Random.value - .5f, Random.value - .5f);
+                        }
+                        
+                        if (Random.value > .2f)
+                        {
+                            Vector3 newPosition = transform.position;
+                            newPosition.x += walkingDirection.x;
+                            newPosition.z += walkingDirection.y;
+                            
+                            MoveTo(newPosition);
+                        }
+                    }
                 }
                 else
                 {
@@ -269,7 +297,7 @@ public class EnemyBrick : MonoBehaviour
 
     private bool TowerReached()
     {
-        return GetDistanceFromTower() <= 1;
+        return GetDistanceFromTower() <= attackDistance;
     }
 
     public bool Destroy()

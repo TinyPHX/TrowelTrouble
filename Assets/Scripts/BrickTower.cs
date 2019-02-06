@@ -76,10 +76,14 @@ public class BrickTower : MonoBehaviour
         damageGiven += damage;
     }
 
+    public int BrickCount
+    {
+        get { return quadrants[0].Count + quadrants[1].Count + quadrants[2].Count + quadrants[3].Count; }
+    }
+
     private void AddBrick(EnemyBrick brick)
     {
-        int brickCount = quadrants[0].Count + quadrants[1].Count + quadrants[2].Count + quadrants[3].Count;
-        if (brickCount >= 3)
+        if (BrickCount >= 3)
         {
             roof.SetActive(true);
         }
@@ -99,7 +103,6 @@ public class BrickTower : MonoBehaviour
 
         brick.Stack();
         brick.GetComponent<Rigidbody>().isKinematic = true;
-        brick.GetComponentInChildren<BoxCollider>().enabled = false;
 
         float verticalPosition = (brickSize.y / 2);
 
@@ -162,10 +165,12 @@ public class BrickTower : MonoBehaviour
         brick.GetComponent<Rigidbody>().isKinematic = false;
         brick.GetComponentInChildren<BoxCollider>().enabled = true;
 
-        float randomSignX = Mathf.Sign(Random.Range(-1, 1));
-        float randomSignZ = Mathf.Sign(Random.Range(-1, 1));
+        float popForce = 8;
+        float randomSignX = Mathf.Sign(Random.Range(-popForce, popForce));
+        float randomSignZ = Mathf.Sign(Random.Range(-popForce, popForce));
+        float randomSignY = Mathf.Sign(Random.Range(0, popForce * 2));
 
-        brick.GetComponent<Rigidbody>().velocity = new Vector3(randomSignX, 1f, randomSignZ) * popSpeed;
+        brick.GetComponent<Rigidbody>().velocity = new Vector3(randomSignX, randomSignY, randomSignZ) * popSpeed;
 
         popQueue.Add(brick);
         Invoke("UnstackFirstBrickInQueue", brickPopReenableTime);

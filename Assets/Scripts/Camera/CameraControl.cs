@@ -79,6 +79,7 @@ public class CameraControl : MonoBehaviour
     private Vector3 startRotaion;
 
     [Header(" --- Trowel Trouble Variables --- ")]
+    [SerializeField] private bool enableTrowelTrouble = true;
     [SerializeField] private float minDistance = 1;
     [SerializeField] private float maxDistance = 30;
     [SerializeField] private AnimationCurve distanceCurve = AnimationCurve.Linear(0, 1, 1, 1);
@@ -113,8 +114,11 @@ public class CameraControl : MonoBehaviour
                 desiredRotation.z);
         }
 
-        TrowelTroubleBehavior();
-        
+        if (enableTrowelTrouble)
+        {
+            TrowelTroubleBehavior();
+        }
+
         if (moveEnabled)
         {
             Move();
@@ -206,6 +210,7 @@ public class CameraControl : MonoBehaviour
         if (desiredPosition != Vector3.zero)
         {
             transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref moveVelocity, dampTime);
+//            transform.position = Vector3.MoveTowards(transform.position, desiredPosition, 1 / dampTime);
         }
     }
 
@@ -215,7 +220,7 @@ public class CameraControl : MonoBehaviour
         
         if (newRotation != transform.eulerAngles && !newRotation.Equals(transform.eulerAngles))
         {
-            transform.rotation = transform.rotation.RotateTowardsSnap(Quaternion.Euler(newRotation), 1 / rotationDampTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(newRotation), 1 / rotationDampTime);
         }
     }
     
